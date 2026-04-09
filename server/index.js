@@ -35,7 +35,8 @@ app.get("/login", preshware(), (req, res) => {
     // res.send("Login Page")
     // res.status(404)
 
-    res.status(404).send("Login Page");
+    // res.status(404).send("Login Page");
+    res.sendFile(PATH.join(__dirname, "frontend/login.html"))
 
     // console.log(req);
     const { username, password } = req.query
