@@ -1,7 +1,8 @@
-const express = require("express")
+const express = require("express") // server
 const app = express()
 const PORT = 5000
 const PATH = require("path");
+const bodyParser = require("body-parser")
 
 // Middleware
 app.use((req, res, next) => {
@@ -13,6 +14,12 @@ app.use((req, res, next) => {
     next()
 })
 
+// body-parser middleware
+// app.use(bodyParser.json())
+// app.use(express.json()) // REST API
+app.use(bodyParser.urlencoded({ extended: false }))
+
+
 // Middleware for login route
 const preshware = () => {
     return (req, res, next) => {
@@ -20,7 +27,7 @@ const preshware = () => {
         next();
     }
 }
-// middle to serve static files
+// middleware to serve static files
 app.use(express.static("frontend"));
 app.use(express.static(PATH.join(__dirname, "frontend")));
 
@@ -39,11 +46,19 @@ app.get("/login", preshware(), (req, res) => {
     res.sendFile(PATH.join(__dirname, "frontend/login.html"))
 
     // console.log(req);
-    const { username, password } = req.query
-
-    console.log(username, password);
+    // const { username, password } = req.query
+    // console.log(username, password);
     // res.redirect("/dashboard");
-    
+})
+
+// POST login route
+app.post("/login", (req, res) => {
+    res.send("Login successful")
+
+    // console.log(req.body);
+    const { email, password } = req.body
+    console.log(email, password);
+
 })
 
 // Dashboard Route

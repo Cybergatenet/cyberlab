@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Page</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <h1>Welcome to Login Page</h1>
+    <h2>Click here to login</h2>
+
+    <form action="/login" method="POST">
+
+        <label for="email">Email</label>
+        <input type="email" name="email" placeholder="Enter your Email">
+
+        <br>
+        <label for="password">Password</label>
+        <input type="password" id="pwd" name="pwd" placeholder="Enter Your Password">
+        <br>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        const password = document.querySelector("#pwd")
+
+        const newPwd = new HashChangeEvent(password)
+
+        
+    </script>
+</body>
+</html>

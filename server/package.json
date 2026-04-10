@@ -4,8 +4,9 @@
   "description": "This is our test server for Ethical Hacking",
   "main": "index",
   "scripts": {
-    "start": "node index",
-    "dev": "nodemon index"
+    "start": "node index", 
+    "dev": "nodemon index",
+    "presh": "nodemon index"
   },
   "repository": {
     "type": "git",
