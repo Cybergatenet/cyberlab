@@ -3,6 +3,7 @@ const app = express()
 const PORT = 5000
 const PATH = require("path");
 const bodyParser = require("body-parser")
+const SESSION = require("express-session")
 
 // Middleware
 app.use((req, res, next) => {
@@ -31,6 +32,32 @@ const preshware = () => {
 app.use(express.static("frontend"));
 app.use(express.static(PATH.join(__dirname, "frontend")));
 
+//  DB - SQL
+const USERS = [
+    {
+        user_id: 1,
+        username: "Cybergate",
+        email: "cybergate@gmail.com",
+        password: "123456",
+        activated: true
+    },
+    {
+        user_id: 2,
+        username: "Precious",
+        email: "precious@gmail.com",
+        password: "123456",
+        activated: true
+    },
+    {
+        user_id: 3,
+        username: "Chinedu",
+        email: "chinedu@gmail.com",
+        password: "asdfgh",
+        activated: false
+    }
+]
+
+
 // routes = home route
 app.get('/', (req, res) => {
     res.send("My server")
@@ -51,19 +78,50 @@ app.get("/login", preshware(), (req, res) => {
     // res.redirect("/dashboard");
 })
 
-// POST login route
 app.post("/login", (req, res) => {
-    res.send("Login successful")
-
-    // console.log(req.body);
+    // res.send("Data Recieved")
+    // // object destructuring
+    // console.log(email, pwd);
+    // console.log(req);
     const { email, password } = req.body
-    console.log(email, password);
 
+    if(email && password){
+        // validate
+        USERS.forEach((user, index) => { // connecting to DB
+            if(email === user.email && password === user.password){
+                // login successful
+                // create user Session
+                SESSION({
+                    resave: true,
+                    // secret: express.secret("my secrete code here"),
+                    // secret: bycrpt.hash("1234556"),
+                    secret: "my secret",
+                    saveUninitialized: true,
+                    cookie: {
+                        maxAge: 36000
+                    }
+                })
+
+                // create cookie for client
+                // SESSION.Cookie.send(user.user_id)
+                // redirect user dashboard
+                res.redirect("/dashboard")
+                // res.json({ isError: false, payload: user, message: "Login Successful"  })
+            }else{
+                // Wrong credential
+                res.status(200).json({ isError: true, payload: null, message: "Wrong Credentials. Try Again." })
+            }
+        })
+
+    }else{
+        res.status(300).json({ isError: true, payload: null, message: "Email or Password Cannot be Empty" })
+    }
 })
 
-// Dashboard Route
+// Dashboard
 app.get("/dashboard", (req, res) => {
-    res.send("Dashboard Page")
+    res.sendFile(PATH.join(__dirname, "frontend/dashboard.html"))
 })
+
 
 app.listen(PORT, () => console.log(`Server Running on ${PORT}`));
