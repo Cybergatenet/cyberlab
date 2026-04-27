@@ -6,6 +6,33 @@ const bodyParser = require("body-parser")
 const SESSION = require("express-session")
 const MYSQL = require("mysql2")
 
+// Connecting To Database
+const DB = MYSQL.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "",
+    database: 'preshDB'
+})
+
+const sql = "SELECT * FROM Employee";
+DB.query(sql, (error, result) => {
+    // if(error) throw new Error("Failed to connect to DB");
+
+    if(error){
+        console.log(error.message);
+        
+    }else{
+        console.table(result);
+        
+        result.forEach(user => {
+            console.log(user.Email);
+            
+        })
+    }
+    
+})
+
 // Middleware
 app.use((req, res, next) => {
     // capture file
