@@ -4,6 +4,7 @@ const PORT = 5000
 const PATH = require("path");
 const bodyParser = require("body-parser")
 const SESSION = require("express-session")
+const MYSQL = require("mysql2")
 
 // Middleware
 app.use((req, res, next) => {

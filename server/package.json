@@ -4,7 +4,7 @@
   "description": "This is our test server for Ethical Hacking",
   "main": "index",
   "scripts": {
-    "start": "node index", 
+    "start": "node index",
     "dev": "nodemon index",
     "presh": "nodemon index"
   },
@@ -26,7 +26,8 @@
     "dotenv": "^17.4.0",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
