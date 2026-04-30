@@ -5,6 +5,12 @@ const PATH = require("path");
 const bodyParser = require("body-parser")
 const SESSION = require("express-session")
 const MYSQL = require("mysql2")
+const UUID = require('uuid')
+
+// const uid = UUID.v4()
+
+// console.log(uid);
+
 
 // Connecting To Database
 const DB = MYSQL.createConnection({
@@ -14,24 +20,19 @@ const DB = MYSQL.createConnection({
     password: "",
     database: 'preshDB'
 })
-
-const sql = "SELECT * FROM Employee";
-DB.query(sql, (error, result) => {
-    // if(error) throw new Error("Failed to connect to DB");
-
-    if(error){
-        console.log(error.message);
-        
-    }else{
-        console.table(result);
-        
-        result.forEach(user => {
-            console.log(user.Email);
-            
-        })
-    }
-    
-})
+// CRUD - Create Read Update Delete/Drop
+// const sql = "SELECT * FROM Employee";
+// DB.query(sql, (error, result) => {
+//     // if(error) throw new Error("Failed to connect to DB");
+//     if(error){
+//         console.log(error.message);
+//     }else{
+//         console.table(result);
+//         result.forEach(user => {
+//             console.log(user.Email);       
+//         })
+//     }
+// })
 
 // Middleware
 app.use((req, res, next) => {
@@ -115,30 +116,45 @@ app.post("/login", (req, res) => {
 
     if(email && password){
         // validate
-        USERS.forEach((user, index) => { // connecting to DB
-            if(email === user.email && password === user.password){
-                // login successful
-                // create user Session
-                SESSION({
-                    resave: true,
-                    // secret: express.secret("my secrete code here"),
-                    // secret: bycrpt.hash("1234556"),
-                    secret: "my secret",
-                    saveUninitialized: true,
-                    cookie: {
-                        maxAge: 36000
-                    }
-                })
+        // // USERS.forEach((user, index) => { // connecting to DB
+        // //     if(email === user.email && password === user.password){
+        // //         // login successful
+        // //         // create user Session
+        // //         SESSION({
+        // //             resave: true,
+        // //             // secret: express.secret("my secrete code here"),
+        // //             // secret: bycrpt.hash("1234556"),
+        // //             secret: "my secret",
+        // //             saveUninitialized: true,
+        // //             cookie: {
+        // //                 maxAge: 36000
+        // //             }
+        // //         })
 
-                // create cookie for client
-                // SESSION.Cookie.send(user.user_id)
-                // redirect user dashboard
-                res.redirect("/dashboard")
-                // res.json({ isError: false, payload: user, message: "Login Successful"  })
+        // //         // create cookie for client
+        // //         // SESSION.Cookie.send(user.user_id)
+        // //         // redirect user dashboard
+        // //         res.redirect("/dashboard")
+        // //         // res.json({ isError: false, payload: user, message: "Login Successful"  })
+        // //     }else{
+        // //         // Wrong credential
+        // //         res.status(200).json({ isError: true, payload: null, message: "Wrong Credentials. Try Again." })
+        // //     }
+        // })
+
+        // Using Real Data
+        DB.query(`SELECT * FROM Employee WHERE Email='${email}' AND password_hash='${password}'`, (error, result) => {
+            if(error) throw new Error("Error: "+ error.message);
+            
+            if(result == null || result == []){
+                res.json({ meesgae: "No Result Found | Invalid Credentials"})
             }else{
-                // Wrong credential
-                res.status(200).json({ isError: true, payload: null, message: "Wrong Credentials. Try Again." })
+                result.forEach(staff => {
+                    console.log(staff);
+                    res.json({ payload: [...result]})
+                })
             }
+            
         })
 
     }else{
@@ -149,6 +165,26 @@ app.post("/login", (req, res) => {
 // Dashboard
 app.get("/dashboard", (req, res) => {
     res.sendFile(PATH.join(__dirname, "frontend/dashboard.html"))
+})
+
+// signup page
+app.get("/signup", (req, res) => {
+    res.sendFile(PATH.join(__dirname, "/frontend/signup.html"))
+})
+
+app.post("/signup", (req, res) => {
+    const { firstname, surname, email, department, password } = req.body;
+
+    const sql = `INSERT INTO Employee (id, First_name, Surname, Email, department, password_hash) VALUES (20, '${firstname}', '${surname}', "${email}", '${department}', '${password}')`;
+
+    DB.query(sql, (error, result) => {
+        if(error) throw new Error("Insert Failed: "+ error.message);
+
+        if(result){
+            console.log("Account Has Been Created");
+            res.redirect("/login");
+        }
+    })
 })
 
 
