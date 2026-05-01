@@ -4,8 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | welcome</title>
+    <link rel="stylesheet" href="./bootstrap/dist/css/bootstrap.min.css">
 </head>
-<body>
-    <h1>Welcome to Dashboard</h1>
+<body class="container">
+    <div class="row p-3">
+        <h1 class="col-md-8">Welcome to Dashboard</h1>
+        <button class="btn btn-sm btn-primary col-md-4">Add Product</button>
+    </div>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Action</th>
+        </tr>
+        <!-- List of Products -->
+        <tbody id="product">
+
+        </tbody>
+    </table>
+
+    <script src="./bootstrap/dist/js/bootstrap.min.js"></script>
+    <script>
+        const product = document.querySelector("#product")
+        // Fetch Products from API
+        const editProduct = (product_name, products_id, price, quantity ) => {
+            alert(`${product_name},${products_id}, ${price}, ${ quantity}`)
+        }
+
+        const deleteProduct = (id) => {
+            // alert(id)
+            const answer = confirm("You are about to delete this product. Continue?")
+            if(answer){
+                fetch("http://localhost:5000/delete/:"+id, {
+                    method: "delete"
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message)
+                }) 
+            }
+        }
+        const products = async () => {
+            await fetch("http://localhost:5000/products")
+            .then(res => res.json())
+            .then(data => {
+                // console.log(data.payload);
+                const results = data.payload
+                results.forEach(result => {
+                    // console.log({...result});
+                    product.innerHTML += `
+                        <tr>
+                            <td>${result.products_id}</td>
+                            <td>${result.product_name}</td>
+                            <td>${result.price}</td>
+                            <td>${result.quantity}</td>
+                            <td>
+                                <button id="${result.products_id}" onclick="editProduct(${result.products_id}, ${result.product_name}, ${result.price}, ${result.quantity})" class="btn btn-sm btn-warning">Edit</button>
+                                <button id="${result.products_id}" onclick="deleteProduct(${result.products_id})" class="btn btn-sm btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            })
+            
+        }
+
+        products();
+        
+    </script>
 </body>
 </html>

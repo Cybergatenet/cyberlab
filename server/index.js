@@ -179,7 +179,7 @@ app.post("/signup", (req, res) => {
 
     DB.query(sql, (error, result) => {
         if(error) throw new Error("Insert Failed: "+ error.message);
-
+        
         if(result){
             console.log("Account Has Been Created");
             res.redirect("/login");
@@ -187,5 +187,37 @@ app.post("/signup", (req, res) => {
     })
 })
 
+
+// Fetch all Product REST-API
+app.get("/products", (req, res) => {
+    const sql = "SELECT * FROM products";
+
+    DB.query(sql, (error, result) => {
+        if(error) throw new Error("Request Failed: "+ error.message);
+
+        if(result.length > 0){
+            // sending to frontend
+            res.json({ payload: result })
+        }else{
+            res.json({ message: "No Product Found" })
+        }
+
+    })
+})
+
+// Delete Request
+app.delete("/delete/:id", (req, res) => {
+    const sql = `DELETE FROM products WHERE products_id='${req.params.id}'`
+
+    DB.query(sql, (error, result) => {
+        if(error) throw new Error("Request Failed: "+error.message);
+
+        if(result){
+            res.json({ message: "Successfully Deleted" })
+        }else{
+            res.json({ error: true, message: "Unable to Delete" })
+        }
+    })
+})
 
 app.listen(PORT, () => console.log(`Server Running on ${PORT}`));
