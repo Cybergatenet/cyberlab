@@ -26,24 +26,86 @@
         </tbody>
     </table>
 
+    <!-- Modal box here -->
+    <!-- Button to Open the Modal -->
+    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+    Open modal
+    </button> -->
+
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h4 class="modal-title">Edit Product</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+            <form action="/update" class="form-group" method="post">
+               <label for="">product Id</label>
+                <input type="number" class="form-control" name="products_id" value="" id="products_id" hidden>
+                 <label for="">product Name</label>
+                <input type="text" class="form-control" name="product_name" id="product_name">
+                 <label for="">Price</label>
+                <input type="number" class="form-control" name="price" id="price">
+                 <label for="">Quantity</label>
+                <input type="number" class="form-control" name="quantity" id="quantity">
+                
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <!-- onclick="updateProduct()" -->
+                    <button type="submit" class="btn btn-primary" >Submit</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </div>
+    </div>
+
     <script src="./bootstrap/dist/js/bootstrap.min.js"></script>
     <script>
         const product = document.querySelector("#product")
         // Fetch Products from API
-        const editProduct = (product_name, products_id, price, quantity ) => {
-            alert(`${product_name},${products_id}, ${price}, ${ quantity}`)
+        const editProduct = (id, product_name, price, quantity) => {
+            // console.log(id, product_name, price, quantity);
+            const pro_id = document.querySelector("#products_id"),
+                name = document.querySelector("#product_name"),
+                pro_price = document.querySelector("#price"),
+                Pro_quantity = document.querySelector("#quantity");
+
+            pro_id.value = id;
+            name.value = product_name;
+            pro_price.value = price;
+            Pro_quantity.value = quantity;
         }
+
+        // updateProduct
+        // const updateProduct = (e) => {
+        //     // e.preventDefault();
+        //     const pro_id = document.querySelector("#products_id"),
+        //         name = document.querySelector("#product_name"),
+        //         pro_price = document.querySelector("#price"),
+        //         Pro_quantity = document.querySelector("#quantity");
+
+        // }
 
         const deleteProduct = (id) => {
             // alert(id)
             const answer = confirm("You are about to delete this product. Continue?")
             if(answer){
-                fetch("http://localhost:5000/delete/:"+id, {
+                fetch(`http://localhost:5000/delete/${id}`, {
                     method: "delete"
                 })
                 .then(res => res.json())
                 .then(data => {
                     alert(data.message)
+                    // document.location.href = "http://localhost:5000/dashboard"
                 }) 
             }
         }
@@ -62,7 +124,7 @@
                             <td>${result.price}</td>
                             <td>${result.quantity}</td>
                             <td>
-                                <button id="${result.products_id}" onclick="editProduct(${result.products_id}, ${result.product_name}, ${result.price}, ${result.quantity})" class="btn btn-sm btn-warning">Edit</button>
+                                <button id="${result.products_id}" onclick="editProduct(${result.products_id}, '${result.product_name}', '${result.price}', '${result.quantity}')" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#myModal">Edit</button>
                                 <button id="${result.products_id}" onclick="deleteProduct(${result.products_id})" class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
