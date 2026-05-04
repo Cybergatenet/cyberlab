@@ -236,23 +236,41 @@ app.post("/update", (req, res) => {
     // return;
     // const sql = `UPDATE Employee SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=${+products_id} LIMIT 1`;
 
-    // const sql = `UPDATE Employee SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=`+products_id;
+    const sql = `UPDATE Employee SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=`+products_id;
 
-    const sql = "UPDATE `products` SET `price` = '910000', `product_name` = 'battery22-2', `quantity` = '3030' WHERE `products`.`products_id` = 514";
+    // const sql = "UPDATE `products` SET `price` = '910000', `product_name` = 'battery22-2', `quantity` = '3030' WHERE `products`.`products_id` = 514";
 
     DB.query(sql, (error, result) => {
         if(error) throw new Error("Failed to Update: "+ error.message);
 
         if(result){
             console.log("SQL Result: ", result);
-            // return res.json({ message: "Prodcut Updated Successfully", msg: result.message });
+            return res.json({ message: "Prodcut Updated Successfully", msg: result.message });
         }else{
-            // return res.json({ error: true, message: "Unable to Update Record" })
+            return res.json({ error: true, message: "Unable to Update Record" })
+        }
+    })    
+})
+
+// update using Patch request method
+app.patch("/update/:id", (req, res) => {
+    const id = req.params.id
+
+    console.log(id);
+
+    const sql = `UPDATE Employee SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=`+products_id;
+
+    DB.query(sql, (error, result) => {
+        if(error) throw new Error("Failed to Update: "+ error.message);
+
+        if(result){
+            console.log("SQL Result: ", result);
+            return res.json({ message: "Prodcut Updated Successfully", msg: result.message });
+        }else{
+            return res.json({ error: true, message: "Unable to Update Record" })
         }
     })
 
-    res.redirect("/dashboard")
-    
 })
 
 app.listen(PORT, () => console.log(`Server Running on ${PORT}`));

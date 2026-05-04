@@ -45,7 +45,7 @@
 
         <!-- Modal body -->
         <div class="modal-body">
-            <form action="/update" class="form-group" method="post">
+            <form class="form-group" id="form">
                <label for="">product Id</label>
                 <input type="number" class="form-control" name="products_id" value="" id="products_id" hidden>
                  <label for="">product Name</label>
@@ -57,8 +57,7 @@
                 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <!-- onclick="updateProduct()" -->
-                    <button type="submit" class="btn btn-primary" >Submit</button>
+                    <button type="button" onclick="updateProduct()" class="btn btn-primary" >Submit</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
             </form>
@@ -77,7 +76,8 @@
             const pro_id = document.querySelector("#products_id"),
                 name = document.querySelector("#product_name"),
                 pro_price = document.querySelector("#price"),
-                Pro_quantity = document.querySelector("#quantity");
+                Pro_quantity = document.querySelector("#quantity"),
+                form = document.querySelector("#form");
 
             pro_id.value = id;
             name.value = product_name;
@@ -86,14 +86,25 @@
         }
 
         // updateProduct
-        // const updateProduct = (e) => {
-        //     // e.preventDefault();
-        //     const pro_id = document.querySelector("#products_id"),
-        //         name = document.querySelector("#product_name"),
-        //         pro_price = document.querySelector("#price"),
-        //         Pro_quantity = document.querySelector("#quantity");
+        const updateProduct = (e) => {
+            // e.preventDefault();
+            const pro_id = document.querySelector("#products_id"),
+                pro_name = document.querySelector("#product_name"),
+                pro_price = document.querySelector("#price"),
+                Pro_quantity = document.querySelector("#quantity");
 
-        // }
+            fetch("http://localhost:5000/update/"+pro_id.value, {
+                method: 'PATCH',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: {pro_name, pro_price, Pro_quantity}
+                // body: new FormData(form)
+            })
+            .then(res => res.json())
+            .then(data => console.log(data))
+            .catch(err => console.log(err.message))
+        }
 
         const deleteProduct = (id) => {
             // alert(id)
@@ -105,7 +116,7 @@
                 .then(res => res.json())
                 .then(data => {
                     alert(data.message)
-                    // document.location.href = "http://localhost:5000/dashboard"
+                    document.location.href = "http://localhost:5000/dashboard"
                 }) 
             }
         }
