@@ -45,9 +45,9 @@ app.use((req, res, next) => {
 })
 
 // body-parser middleware
-// app.use(bodyParser.json())
-// app.use(express.json()) // REST API
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json()) // JSON Data
+app.use(express.json()) // REST API
+app.use(bodyParser.urlencoded({ extended: false })) // POST
 
 
 // Middleware for login route
@@ -236,7 +236,7 @@ app.post("/update", (req, res) => {
     // return;
     // const sql = `UPDATE Employee SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=${+products_id} LIMIT 1`;
 
-    const sql = `UPDATE Employee SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=`+products_id;
+    const sql = `UPDATE products SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=`+products_id;
 
     // const sql = "UPDATE `products` SET `price` = '910000', `product_name` = 'battery22-2', `quantity` = '3030' WHERE `products`.`products_id` = 514";
 
@@ -258,7 +258,7 @@ app.patch("/update/:id", (req, res) => {
 
     console.log(id);
 
-    const sql = `UPDATE Employee SET price='${price}', quantity='${quantity}', product_name='${product_name}' WHERE products_id=`+products_id;
+    const sql = `UPDATE products SET price='${price}', product_name='${product_name}', quantity='${quantity}' WHERE products_id=`+products_id;
 
     DB.query(sql, (error, result) => {
         if(error) throw new Error("Failed to Update: "+ error.message);
@@ -270,7 +270,29 @@ app.patch("/update/:id", (req, res) => {
             return res.json({ error: true, message: "Unable to Update Record" })
         }
     })
-
 })
+
+// Add New Product
+app.post("/addproduct", (req, res)=>{
+    const { name, price, quantity } = req.body
+    // console.log(req);
+    // return
+    // Using prepared statement
+    const sql = 'INSERT INTO products(`products_id`, `price`, `product_name`, `quantity`) VALUES (?,?,?,?)';
+
+    DB.query(sql, [null, price, name, quantity], (error, result) => {
+        if(error) throw new Error("Insert failed: "+ error.message);
+
+        if(result != null){
+            res.json({ message: "Product Created Successfully" })
+        }else{
+            res.json({ message: "Failed to Insert, result is Null" })
+        }
+    })
+})
+
+
+
+
 
 app.listen(PORT, () => console.log(`Server Running on ${PORT}`));

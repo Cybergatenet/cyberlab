@@ -9,7 +9,7 @@
 <body class="container">
     <div class="row p-3">
         <h1 class="col-md-8">Welcome to Dashboard</h1>
-        <button class="btn btn-sm btn-primary col-md-4">Add Product</button>
+        <button class="btn btn-sm btn-primary col-md-4" data-bs-toggle="modal" data-bs-target="#addModal">Add Product</button>
     </div>
 
     <table class="table table-bordered">
@@ -62,7 +62,36 @@
                 </div>
             </form>
         </div>
+        </div>
+    </div>
+    </div>
 
+
+    <!-- Modal to Add Prodcuts -->
+    <div class="modal" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h4 class="modal-title">Add New Product</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+            <form class="form-group" id="form">
+                <label for="product_name">Product Name</label>
+                <input type="text" class="form-control" name="pro_name" id="pro_name" placeholder="Enter Product Name">
+                <label for="price">Price</label>
+                <input type="number" class="form-control" name="pro_price" id="pro_price" placeholder="Enter Product Price">
+                 <label for="quantity">Quantity</label>
+                <input type="number" class="form-control" name="pro_quantity" id="pro_quantity" placeholder="Enter Product Quantity">
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" onclick="addProduct()" class="btn btn-primary" >Add</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
         </div>
     </div>
     </div>
@@ -120,6 +149,42 @@
                 }) 
             }
         }
+
+        // Add New Product
+        const addProduct = () => {
+            const pro_name = document.querySelector("#pro_name"),
+                pro_price = document.querySelector("#pro_price"),
+                pro_quantity = document.querySelector("#pro_quantity");
+
+            // console.log(pro_name.value, pro_price.value, pro_quantity.value);
+            if(pro_name.value != "" && pro_price.value != "" && pro_quantity.value != ""){
+                // Make API call
+                
+                fetch("http://localhost:5000/addproduct", {
+                    method: "POST",
+                    headers: {
+                        'content-type': "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: pro_name.value, price: pro_price.value, quantity: pro_quantity.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => { 
+                    alert(data.message);
+                    document.location.href = "http://localhost:5000/dashboard"
+                })
+                .catch(error => console.log("f-Error: ", error))
+
+            }else{
+                alert("Kindly fill out all the boxes")
+            }
+            
+            // alert("Product Added")
+        }
+
+
+
         const products = async () => {
             await fetch("http://localhost:5000/products")
             .then(res => res.json())
