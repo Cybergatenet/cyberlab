@@ -1,11 +1,14 @@
 const express = require("express") // server
 const app = express()
-const PORT = 5000
 const PATH = require("path");
 const bodyParser = require("body-parser")
 const SESSION = require("express-session")
 const MYSQL = require("mysql2")
 const UUID = require('uuid')
+const JWT = require("jsonwebtoken")
+const BYCRYPT = require("bcrypt")
+require("dotenv").config()
+const PORT = process.env.PORT
 
 // const uid = UUID.v4()
 
@@ -14,11 +17,11 @@ const UUID = require('uuid')
 
 // Connecting To Database
 const DB = MYSQL.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "",
-    database: 'preshDB'
+    host: process.env.DB_HOST || "localhost",
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 })
 // CRUD - Create Read Update Delete/Drop
 // const sql = "SELECT * FROM Employee";
@@ -143,18 +146,42 @@ app.post("/login", (req, res) => {
         // })
 
         // Using Real Data
-        DB.query(`SELECT * FROM Employee WHERE Email='${email}' AND password_hash='${password}'`, (error, result) => {
+        // DB.query(`SELECT * FROM Employee WHERE Email='${email}' AND password_hash='${password}'`, (error, result) => {
+        //     if(error) throw new Error("Error: "+ error.message);
+            
+        //     if(result == null || result == []){
+        //         res.json({ meesgae: "No Result Found | Invalid Credentials"})
+        //     }else{
+        //         // create Session using JWT
+        //         result.forEach(staff => {
+        //             console.log(staff);
+        //             res.json({ payload: [...result]})
+        //         })
+        //     }
+        // })
+
+        // Applying JWT and Bycrypt and prepared statement
+        DB.query("SELECT * FROM Employee WHERE Email=? LIMIT 1", [email], (error, result) => {
             if(error) throw new Error("Error: "+ error.message);
-            
+
             if(result == null || result == []){
-                res.json({ meesgae: "No Result Found | Invalid Credentials"})
+                res.json({ message: "No Result Found"})
             }else{
-                result.forEach(staff => {
-                    console.log(staff);
-                    res.json({ payload: [...result]})
-                })
+                // verify Password
+                // console.log(result[0].password_hash);
+                if(BYCRYPT.compare(password, result[0].password_hash)){
+                    // password match
+                    // create Session using JWT
+                    const token = JWT.sign({result, ...result[0].password_hash}, process.env.JWT_TOKEN, { expiresIn: '1hr' })
+
+                    res.json({ token: token })
+                    console.log(token);
+                    
+                }else{
+                    // password mismatch
+                    res.json({ message: "Invalid Credentials"})
+                }
             }
-            
         })
 
     }else{
@@ -172,10 +199,17 @@ app.get("/signup", (req, res) => {
     res.sendFile(PATH.join(__dirname, "/frontend/signup.html"))
 })
 
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
     const { firstname, surname, email, department, password } = req.body;
 
-    const sql = `INSERT INTO Employee (id, First_name, Surname, Email, department, password_hash) VALUES (20, '${firstname}', '${surname}', "${email}", '${department}', '${password}')`;
+    // Generate a salt for password
+    const salt_rounds = 10;
+    // const salt = BYCRYPT.genSalt(salt_rounds)
+
+    // Hashing of User password
+    const hashed_password = await BYCRYPT.hash(password, salt_rounds)
+
+    const sql = `INSERT INTO Employee (id, First_name, Surname, Email, department, password_hash) VALUES (20, '${firstname}', '${surname}', "${email}", '${department}', '${hashed_password}')`;
 
     DB.query(sql, (error, result) => {
         if(error) throw new Error("Insert Failed: "+ error.message);
