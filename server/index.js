@@ -6,13 +6,19 @@ const SESSION = require("express-session")
 const MYSQL = require("mysql2")
 const UUID = require('uuid')
 const JWT = require("jsonwebtoken")
-const BYCRYPT = require("bcrypt")
+const BYCRYPT = require("bcrypt") // password hashing & verification
+const crypto = require("crypto") // gen base 64 ramdom string for JWT
 require("dotenv").config()
 const PORT = process.env.PORT
 
 // const uid = UUID.v4()
 
 // console.log(uid);
+
+
+// generate secret token
+const secret = crypto.randomBytes(64).toString('hex');
+console.log(secret);
 
 
 // Connecting To Database
@@ -172,10 +178,29 @@ app.post("/login", (req, res) => {
                 if(BYCRYPT.compare(password, result[0].password_hash)){
                     // password match
                     // create Session using JWT
-                    const token = JWT.sign({result, ...result[0].password_hash}, process.env.JWT_TOKEN, { expiresIn: '1hr' })
+                    const payload = [result, ...result[0].password_hash]
+                    const token = JWT.sign({payload: payload}, process.env.JWT_TOKEN, { expiresIn: '1hr' })
 
+                    // used for client-side validation
+                    // using LocalStorage
+                    // Using Session storage
                     res.json({ token: token })
                     console.log(token);
+
+                    // using Cookie (http-only: true, backend handle session creation)
+                    res.cookie(
+                        result[0].First_name,
+                        [result, ...result[0].password_hash],
+                        {
+                            maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+                            httpOnly: true, // XSS attacks
+                            secure: true // CSRF attack
+                        }
+                    )
+
+
+                    // on logout route
+                    // res.clearCookie("name")
                     
                 }else{
                     // password mismatch
