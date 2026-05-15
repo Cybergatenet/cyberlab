@@ -17,8 +17,8 @@ const PORT = process.env.PORT
 
 
 // generate secret token
-const secret = crypto.randomBytes(64).toString('hex');
-console.log(secret);
+// const secret = crypto.randomBytes(64).toString('hex');
+// console.log(secret);
 
 
 // Connecting To Database
@@ -44,14 +44,14 @@ const DB = MYSQL.createConnection({
 // })
 
 // Middleware
-app.use((req, res, next) => {
-    // capture file
-    // re-auth
-    // cookies && session token
-    // JWT token
-    console.log("Middleware is connected now...")
-    next()
-})
+// app.use((req, res, next) => {
+//     // capture file
+//     // re-auth
+//     // cookies && session token
+//     // JWT token
+//     console.log("Middleware is connected now...")
+//     next()
+// })
 
 // body-parser middleware
 app.use(bodyParser.json()) // JSON Data
@@ -66,6 +66,26 @@ const preshware = () => {
         next();
     }
 }
+
+// JWT Middleware
+const JWTAuthenticationWare = () => {
+    return (req, res, next) => {
+        const auth = req.headers.authorization
+        const token = auth.split(" ")[1]
+        // console.log(token);
+        const User = JWT.decode(token)
+
+        console.log(User);
+        
+    }
+}
+
+// function JWTAuthenticationWare() {
+//     return (req, res, next) {
+
+//     }
+// }
+
 // middleware to serve static files
 app.use(express.static("frontend"));
 app.use(express.static(PATH.join(__dirname, "frontend")));
@@ -102,7 +122,7 @@ app.get('/', (req, res) => {
 })
 
 // login route
-app.get("/login", preshware(), (req, res) => {
+app.get("/login", (req, res) => {
     // Params, Query, body
     // res.send("Login Page")
     // res.status(404)
@@ -178,29 +198,31 @@ app.post("/login", (req, res) => {
                 if(BYCRYPT.compare(password, result[0].password_hash)){
                     // password match
                     // create Session using JWT
-                    const payload = [result, ...result[0].password_hash]
+                    const payload = [result, ...result[0].password_hash] // Spread Operator 
+
+                    // Using JWT to create a session
                     const token = JWT.sign({payload: payload}, process.env.JWT_TOKEN, { expiresIn: '1hr' })
 
                     // used for client-side validation
                     // using LocalStorage
                     // Using Session storage
                     res.json({ token: token })
-                    console.log(token);
+                    // console.log(token);
 
                     // using Cookie (http-only: true, backend handle session creation)
-                    res.cookie(
-                        result[0].First_name,
-                        [result, ...result[0].password_hash],
-                        {
-                            maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-                            httpOnly: true, // XSS attacks
-                            secure: true // CSRF attack
-                        }
-                    )
+                    // res.cookie(
+                    //     result[0].First_name,
+                    //     [result, ...result[0].password_hash],
+                    //     {
+                    //         maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+                    //         httpOnly: true, // XSS attacks
+                    //         secure: true // CSRF attack
+                    //     }
+                    // )
 
 
                     // on logout route
-                    // res.clearCookie("name")
+                    // res.clearCookie(result[0].First_name)
                     
                 }else{
                     // password mismatch
@@ -332,10 +354,10 @@ app.patch("/update/:id", (req, res) => {
 })
 
 // Add New Product
-app.post("/addproduct", (req, res)=>{
+app.post("/addproduct", JWTAuthenticationWare(), (req, res)=>{
     const { name, price, quantity } = req.body
     // console.log(req);
-    // return
+    return
     // Using prepared statement
     const sql = 'INSERT INTO products(`products_id`, `price`, `product_name`, `quantity`) VALUES (?,?,?,?)';
 

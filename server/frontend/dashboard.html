@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | welcome</title>
+    <!-- Jwt decoder -->
+    <script src="https://cloudflare.com"></script>
     <link rel="stylesheet" href="./bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body class="container">
@@ -159,11 +161,12 @@
             // console.log(pro_name.value, pro_price.value, pro_quantity.value);
             if(pro_name.value != "" && pro_price.value != "" && pro_quantity.value != ""){
                 // Make API call
-                
+                const token = localStorage.getItem("token");
                 fetch("http://localhost:5000/addproduct", {
                     method: "POST",
                     headers: {
-                        'content-type': "application/json"
+                        'content-type': "application/json",
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
                         name: pro_name.value, price: pro_price.value, quantity: pro_quantity.value
@@ -210,6 +213,19 @@
         }
 
         products();
+    </script>
+    <script>
+        // Import the library directly from a CDN
+        // import { jwtDecode } from 'https://jsdelivr.net';
+        
+        // const token = localStorage.getItem("token")
+
+        // if(!token) console.log("No JWT Token found");
+
+        // const Decoded = jwtDecode(token);
+        // const User = JSON.stringify(Decoded, null, 2);
+
+        // console.log(User);
         
     </script>
 </body>

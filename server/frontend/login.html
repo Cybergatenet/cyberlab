@@ -28,18 +28,26 @@
         fetch("http://localhost:5000/login")
         .then(res => res.json())
         .then(data => {
-            // console.log(data.token);
-            // using LocalStorage
-            localStorage.setItem("token", data.token)
+            if(data.token){
+                console.log(data.token);
+                //  redirect User
+                document.location.href = "/dashboard";
 
-            // to get it back use:
-            const ourToken = localStorage.getItem("token")
+                // using LocalStorage
+                localStorage.setItem("token", data.token)
 
-            // Using Session Storage
-            sessionStorage.setItem("token", data.token)
+                // to get it back use:
+                // const ourToken = localStorage.getItem("token")
 
-             // to get it back use:
-            const ourSession = sessionStorage.getItem("token")
+                // Using Session Storage
+                sessionStorage.setItem("token", data.token)
+
+                // to get it back use:
+                // const ourSession = sessionStorage.getItem("token")
+            }else{
+                console.log(data);
+                
+            }
         })
     </script>
 </body>
