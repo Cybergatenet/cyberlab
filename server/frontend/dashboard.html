@@ -162,6 +162,7 @@
             if(pro_name.value != "" && pro_price.value != "" && pro_quantity.value != ""){
                 // Make API call
                 const token = localStorage.getItem("token");
+                console.log(token)
                 fetch("http://localhost:5000/addproduct", {
                     method: "POST",
                     headers: {
@@ -189,10 +190,22 @@
 
 
         const products = async () => {
-            await fetch("http://localhost:5000/products")
+            const token = localStorage.getItem("token");
+            await fetch("http://localhost:5000/products", {
+                method: "GET",
+                headers: {
+                    'Content-type': "Application/json",
+                    // 'Authorization': `Bearer ${token}`, // localStorage and SessionStorage
+                    'credentials': 'include' // Backend Cookies
+                }
+            })
             .then(res => res.json())
             .then(data => {
-                // console.log(data.payload);
+                // console.log(data);
+                if(data.error){
+                    alert(data.message)
+                    document.location.href = "/login"
+                }
                 const results = data.payload
                 results.forEach(result => {
                     // console.log({...result});

@@ -70,12 +70,23 @@ const preshware = () => {
 // JWT Middleware
 const JWTAuthenticationWare = () => {
     return (req, res, next) => {
-        const auth = req.headers.authorization
+        const auth = req.headers['authorization']
+        // console.log(auth);
+        if(!auth) return res.json({ message: "Unauthorized" }); // Unauthorized
+
         const token = auth.split(" ")[1]
         // console.log(token);
         const User = JWT.decode(token)
+        
+        if (!token) return res.sendStatus(401); // Unauthorized
+        
+        // console.log(User);
+        JWT.verify(token, process.env.JWT_TOKEN, (err, user) => {
+            if (err) return res.json({ error: true, message: "Session Expired, Login Again" }); // Forbidden (invalid/expired token)
 
-        console.log(User);
+            req.user = user; // Attach decoded user data to the request
+            next();
+        });
         
     }
 }
@@ -206,19 +217,21 @@ app.post("/login", (req, res) => {
                     // used for client-side validation
                     // using LocalStorage
                     // Using Session storage
-                    res.json({ token: token })
+
+
+                    // res.json({ message: "Login Success", token: token })
                     // console.log(token);
 
                     // using Cookie (http-only: true, backend handle session creation)
-                    // res.cookie(
-                    //     result[0].First_name,
-                    //     [result, ...result[0].password_hash],
-                    //     {
-                    //         maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-                    //         httpOnly: true, // XSS attacks
-                    //         secure: true // CSRF attack
-                    //     }
-                    // )
+                    res.cookie(
+                        result[0].First_name,
+                        [result, ...result[0].password_hash],
+                        {
+                            maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+                            httpOnly: true, // XSS attacks
+                            secure: true // CSRF attack
+                        }
+                    )
 
 
                     // on logout route
@@ -270,7 +283,7 @@ app.post("/signup", async (req, res) => {
 
 
 // Fetch all Product REST-API
-app.get("/products", (req, res) => {
+app.get("/products", JWTAuthenticationWare(), (req, res) => {
     const sql = "SELECT * FROM products";
 
     DB.query(sql, (error, result) => {
@@ -287,7 +300,7 @@ app.get("/products", (req, res) => {
 })
 
 // Delete Request
-app.delete("/delete/:id", (req, res) => {
+app.delete("/delete/:id", JWTAuthenticationWare(), (req, res) => {
     const sql = `DELETE FROM products WHERE products_id='${req.params.id}'`;
 
     console.log("REQ. ID: ", req.params.id);
@@ -309,7 +322,7 @@ app.delete("/delete/:id", (req, res) => {
 })
 
 // Update Product Route
-app.post("/update", (req, res) => {
+app.post("/update", JWTAuthenticationWare(), (req, res) => {
     const { products_id, product_name, price, quantity } = req.body
 
     console.log(typeof(+products_id), product_name, price, quantity);
@@ -334,7 +347,7 @@ app.post("/update", (req, res) => {
 })
 
 // update using Patch request method
-app.patch("/update/:id", (req, res) => {
+app.patch("/update/:id", JWTAuthenticationWare(), (req, res) => {
     const id = req.params.id
 
     console.log(id);

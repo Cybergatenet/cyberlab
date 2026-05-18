@@ -10,7 +10,7 @@
     <h1>Welcome to Login Page</h1>
 
     <h2>form</h2>
-    <form action="/login" method="post">
+    <form id="form">
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" name="email" placeholder="Enter your Email" class="form-control">
@@ -19,36 +19,53 @@
             <label for="password">Password</label>
             <input type="password" name="password" placeholder="Enter your Password" class="form-control">
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary" id="btn">Login</button>
     </form>
 
     <script src="./bootstrap/dist/js/bootstrap.min.js"></script>
     <script>
         // new FormData()
-        fetch("http://localhost:5000/login")
-        .then(res => res.json())
-        .then(data => {
-            if(data.token){
-                console.log(data.token);
-                //  redirect User
-                document.location.href = "/dashboard";
+        const btn = document.querySelector("#btn")
+        btn.addEventListener("click", (e) => {
+            e.preventDefault()
+            const UserDetails = new FormData(document.forms[0])
+            // console.log(UserDetails.getAll('password', 'email'));
+            const email = UserDetails.get('email')
+            const password = UserDetails.get('password')
+            // return
+            fetch("http://localhost:5000/login", {
+                method: "POST",
+                headers: {
+                    'Content-type': "Application/json"
+                },
+                body: JSON.stringify({email, password})
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if(data.token){
+                    console.log(data.token);
+                    //  redirect User
+                    document.location.href = "/dashboard";
 
-                // using LocalStorage
-                localStorage.setItem("token", data.token)
+                    // using LocalStorage
+                    localStorage.setItem("token", data.token)
 
-                // to get it back use:
-                // const ourToken = localStorage.getItem("token")
+                    // to get it back use:
+                    // const ourToken = localStorage.getItem("token")
 
-                // Using Session Storage
-                sessionStorage.setItem("token", data.token)
+                    // Using Session Storage
+                    sessionStorage.setItem("token", data.token)
 
-                // to get it back use:
-                // const ourSession = sessionStorage.getItem("token")
-            }else{
-                console.log(data);
-                
-            }
+                    // to get it back use:
+                    // const ourSession = sessionStorage.getItem("token")
+                }else{
+                    console.log(data);
+                    alert(data.message)
+                }
+            })
         })
+        
     </script>
 </body>
 </html>
