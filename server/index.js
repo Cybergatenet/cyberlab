@@ -183,21 +183,22 @@ app.post("/login", (req, res) => {
         // })
 
         // Using Real Data
-        // DB.query(`SELECT * FROM Employee WHERE Email='${email}' AND password_hash='${password}'`, (error, result) => {
-        //     if(error) throw new Error("Error: "+ error.message);
+        DB.query(`SELECT * FROM Employee WHERE Email='${email}' AND password_hash='${password}'`, (error, result) => {
+            if(error) throw new Error("Error: "+ error.message);
             
-        //     if(result == null || result == []){
-        //         res.json({ meesgae: "No Result Found | Invalid Credentials"})
-        //     }else{
-        //         // create Session using JWT
-        //         result.forEach(staff => {
-        //             console.log(staff);
-        //             res.json({ payload: [...result]})
-        //         })
-        //     }
-        // })
+            if(result == null || result == []){
+                res.json({ meesgae: "No Result Found | Invalid Credentials"})
+            }else{
+                // create Session using JWT
+                result.forEach(staff => {
+                    console.log(staff);
+                    res.json({ payload: [...result]})
+                })
+            }
+        })
 
-        // Applying JWT and Bycrypt and prepared statement
+        return
+        // Applying JWT and Bycrypt and prepared statement -- SECURED
         DB.query("SELECT * FROM Employee WHERE Email=? LIMIT 1", [email], (error, result) => {
             if(error) throw new Error("Error: "+ error.message);
 
@@ -386,6 +387,35 @@ app.post("/addproduct", JWTAuthenticationWare(), (req, res)=>{
 })
 
 
+//////////////  SQL INJECTION EXAMPLES ////////////////////////////
+app.get("/products/fetch", (req, res) => {
+    const { id, name } = req.query // PRO
+    // const id = req.query.id
+
+    // console.log(id, name);
+    // query DB
+    // const sql = `SELECT * FROM products WHERE product_name ='${id}' LIMIT 1`
+    const sql = `SELECT * FROM products WHERE products_id =? LIMIT 1`;
+
+    // const sql = 'SELECT * FROM products WHERE products_id ='+id;
+
+    // using prepared statement
+    // const sql = 'SELECT * FROM products WHERE products_id =?';
+
+    // console.log(sql);
+    DB.query(sql, [id], (error, result) => {
+        if(error){
+            return res.json({ payload: null, err: error.message });
+        }
+
+        return res.json({ payload: result })
+    })
+    // res.json({ payload: null })
+
+    // ' OR 1=1 --
+    // ' OR 'a'='a'--
+    // 1=1 OR 1=1
+})
 
 
 
