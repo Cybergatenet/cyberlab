@@ -419,4 +419,4 @@ app.get("/products/fetch", (req, res) => {
 
 
 
-app.listen(PORT, () => console.log(`Server Running on ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server Running on ${PORT}`));
