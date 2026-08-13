@@ -39,7 +39,80 @@
     
 
     // Constants
+    define("PI", 3.142, true); // Case-insensitive constant
+
+    // echo PI; // Output: 3.142
+    // echo "<br>";
+    // echo pi; // Output: 3.142
+
+    // "CyBeRgAtE"; // Pascal Case
+
     // Concatenations
+    $username = "Cybergate";
+    $age = 12;
+    $message = "Hello, my name is " . $username . " and I am " . $age . " years old.";
+    echo "\n\r";
+    echo $message; // Output: Hello, my name is Cybergate and I am
+    echo "<br>";
+
+    // Examples
+    // print_r($students);
+    // var_dump($students);
+
+    // Functions
+    const PI = 3.142; // Constant
+    function sayHello(){ // without parameters | Arguments
+        return "hello";
+    }
+    // $result = sayHello(); // Output: hello
+    // echo $result;
+
+    // echo sayHello();
+
+
+    // ## Function with Parameters | Arguments
+    function greet($name, $age){ // with parameters | Arguments
+        return "Hello, my name is " . $name . " and I am " . $age . " years old.";
+    }
+    // echo greet("Fresh Presh", 20);
+    // echo "<br> <hr>";
+    // echo greet("Samuel", 23);
+
+    // ## Callback Functions
+    function greetUser($name="Guest", $callback){
+        $greeting = "Hello, my name is " . $name . ".";
+        return $callback($greeting);
+    }
+
+    function callback($msg){
+        return $msg . " Nice to meet you!";
+    }
+
+    // echo greetUser("Fresh Presh", "callback");
+    // echo greetUser(null,"callback");
+
+
+    // Loops
+    // for, foreach, while, do while
+    // for($i = 0; $i < 10; $i++){
+    //     echo $i."<br>";
+    // }
+
+    ## foreach
+    // foreach ($companiesInUmuahia as $key => $value) {
+    //     echo $companiesInUmuahia[$key];
+    // }
+
+    // Conditional Statements
+
+    # Presh will teach me Loop and Conditional Statements
+
+    // OOP
+
+    // Superglobals
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
