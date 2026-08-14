@@ -89,9 +89,25 @@
     }
 
     // mini-calculator
-    
-    // gen OTP for user login system
 
+    function calc($num1, $symb, $num2){
+        return eval("echo $num1 $symb $num2;");
+    }
+
+    // calc(2,'+', 2);
+
+    // gen OTP for user login system
+    function generateOTP($length = 6) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $otp = '';
+        for ($i = 0; $i < $length; $i++) {
+            $otp .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $otp;
+    }
+    // echo generateOTP(10);
+    // rand(1, 100); // Generate a random number between 1 and 100
+    // $characters[20]
 
     // echo greetUser("Fresh Presh", "callback");
     // echo greetUser(null,"callback");
@@ -103,10 +119,32 @@
     //     echo $i."<br>";
     // }
 
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    // for($i = 0; $i < count_chars($characters); $i++){
+    //     echo $characters[$i]."<br>";
+    // }
+
+    $otp = '';
+    for($i = 0; $i < 4; $i++){
+        // echo $characters[$i]."<br>";
+        $otp .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    // echo $otp."<br>";
+    // echo strlen($characters)."<br>";
+    // $picked = rand(1, strlen($characters));
+    // echo "The number picked is ". $picked . " and the value in characters is ". $characters[$picked]."<br>";
+
     ## foreach
     // foreach ($companiesInUmuahia as $key => $value) {
     //     echo $companiesInUmuahia[$key];
     // }
+
+    // while
+    
+
+    // do while
+
 
     // Conditional Statements
 
