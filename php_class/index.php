@@ -88,6 +88,11 @@
         return $msg . " Nice to meet you!";
     }
 
+    // mini-calculator
+    
+    // gen OTP for user login system
+
+
     // echo greetUser("Fresh Presh", "callback");
     // echo greetUser(null,"callback");
 
