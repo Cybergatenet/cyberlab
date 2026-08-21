@@ -141,19 +141,167 @@
     // }
 
     // while
+    // $i = 0;
+    // while ($i <= 10) {
+    //     echo $i."<br>";
+    //     $i++;
+    // }
+
+    $fruits = ["mango", "paw-paw", "pineApple"];
+
+    // $j = 0;
+    // while($j < count($fruits)){
+    //     // echo $j . " " .$fruits[$j];
+    //     // echo "<br>";
+    //     printf("{$j} {$fruits[$j]} <br>");
+    //     $j++;
+    // }
+
+
+    // foreach - Association or Compound Array (Array of Arrays)
+    $stores = ["marketSquare" => "main street", "Jovis" => "Aba branch"];
+    // $stores = array("marketSquare" => "main street");
+    // $stores = Array("marketSquare" => "main street");
+    $stateInNigeria = [
+        array(
+            "Name" => "Abia State",
+            "Capital" => "Umuahia",
+            "Governor" => "Dr. Chief Engr. Alex Otti",
+            "Year" => 1971,
+            "Internal Revenue" => 4200000000,
+            "Budget" => 300000000000,
+            "IsIndependant" => true
+        ),
+        array(
+            "Name" => "Imo State",
+            "Capital" => "Owerri",
+            "Governor" => "Dr. Hope Uzodimma",
+            "Year" => 1968,
+            "Internal Revenue" => 670000000,
+            "Budget" => 380000000000,
+            "IsIndependant" => false
+        )
+    ];
+
+    // foreach($stores as $key => $value){
+    //     echo $stores[$key]."<br>";
+    //     // echo $key."<br>";
+    //     // echo $value."<br>";
+    // }
+
+    // foreach($stateInNigeria as $index => $value){
+    //     // echo $stateInNigeria[$key];
+    //     foreach($stateInNigeria[$index] as $kk => $vv){
+    //         echo $key[$kk];
+    //     }
+    // }
+
+    // for($i = 0; $i < count($stateInNigeria); $i++){
+    //     for($j = 0; $j < count($stateInNigeria[$i]); $j++){
+    //         print_r($stateInNigeria[$j]);
+    //     }
+    // }
     
 
     // do while
+    $i = 0;
+    do{
+        echo $i."<br>";
+        $i++;    
+    }
+    while ($i == 10);
 
 
     // Conditional Statements
 
+
     # Presh will teach me Loop and Conditional Statements
 
-    // OOP
+    // OOP - OBJECT ORIENTED PROGRAMMING
+    // class - is blue blueprint or a prototype to an object 
+
+
+    class Human {
+        // properties of a class
+
+        public $name;
+        private $identity;
+
+        function set_identity($name, $identity){
+            $this->name = $name;
+            $this->identity = $identity;
+        }
+
+        function get_identity(){
+            printf("The username is %s and ID is %s", $this->name, $this->identity);
+            echo "<br>";
+            echo ("The username is ".$this->name . " and ID is ". $this->identity."<br>");
+        }
+
+    }
+
+    // features of a OOP
+    // ### instantiation
+    // # create new instance of Human
+    $presh = new Human();
+
+    $presh->set_identity("Precious", 1122);
+
+    $presh->get_identity();
+    
+
+    // inheritance
+    class Man extends Human{
+        private $gender;
+
+        function add_gender($gender){
+            $this->gender = $gender;
+        }
+
+        function myGender(){
+            var_dump($this->gender);
+        }
+
+    }
+
+    $david = new Man();
+
+    $david->set_identity("David", 3322); // coming Human
+
+    $david->add_gender("Male");
+
+    $david->get_identity(); // Human
+
+    $david->myGender();
+
+
+    // polymorphism
+    // Emcapsulation
+    // Abstraction
+    
+    
+
 
     // Superglobals
+    // $GLOBALS
 
+    // $_COOKIE
+
+    // $_SESSION
+
+    // $_SERVER
+
+    // $_ENV
+
+    // $_FILES
+
+    // $_GET
+
+    // $_POST
+
+    // $_REQUEST
+
+    
 
 
 ?>
